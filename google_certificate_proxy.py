@@ -8,7 +8,7 @@ PORT = 10000
 GOOGLE_SERVICE_URL_HEADER = 'goog_service_url'
 HOST_HEADER = 'host'
 
-class GoogleServiceProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
 	# The handler for all 'GET' request.
     def do_GET(self):
@@ -33,6 +33,6 @@ class GoogleServiceProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
     	# Set body of the response to the proxy caller.
         self.wfile.write(google_service_response.text)
 
-httpd = SocketServer.ForkingTCPServer(('', PORT), GoogleServiceProxy)
+httpd = SocketServer.ForkingTCPServer(('', PORT), GoogleCertificateProxy)
 print ("Now serving at " + str(PORT))
 httpd.serve_forever()
