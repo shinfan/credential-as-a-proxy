@@ -30,15 +30,20 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     def _process_request_headers(self):
         """Processes the request headers.
-           
-        1. Extracts Google service URL from the header.
-        2. Extracts the content length if presents.
-        3. Removes the host header.
+        
+        1. Converts the keys of the headers to lower case. This is to address
+           a different behavior of SimpleHTTPRequestHandler between Python 2 and
+           Python 3. Unlike the Python 2 implementation, the Python 3 handler does
+           not convert the header keys to lower case.
+        2. Extracts Google service URL from the header.
+        3. Extracts the content length if presents.
+        4. Removes the host header.
 
         Returns:
             [request_headers, google_service_url, content_length]
         """
         request_headers = self._convert_dict_keys_to_lower_case(self.headers.dict)
+
         google_service_url = request_headers.pop(GOOGLE_SERVICE_URL_HEADER, None)
 
         if CONTENT_LENGTH_HEADER in request_headers:
@@ -54,6 +59,7 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
         return request_headers, google_service_url, content_length
 
     def _convert_dict_keys_to_lower_case(self, dict):
+        """Converts the keys of a dictionary to lower case."""
         return { k.lower(): v for k, v in dict.items() }
 
     def _extract_request_data(self, content_length):
