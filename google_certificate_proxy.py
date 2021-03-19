@@ -38,7 +38,7 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
         Returns:
             [request_headers, google_service_url, content_length]
         """
-        request_headers = self.headers.dict
+        request_headers = self._convert_dict_keys_to_lower_case(self.headers.dict)
         google_service_url = request_headers.pop(GOOGLE_SERVICE_URL_HEADER, None)
 
         if CONTENT_LENGTH_HEADER in request_headers:
@@ -52,6 +52,9 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
         request_headers.pop(HOST_HEADER, None)
 
         return request_headers, google_service_url, content_length
+
+    def _convert_dict_keys_to_lower_case(self, dict):
+        return { k.lower(): v for k, v in dict.items() }
 
     def _extract_request_data(self, content_length):
         """Extracts the request data based on content_length.
