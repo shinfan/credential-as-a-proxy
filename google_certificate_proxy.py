@@ -37,7 +37,9 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
            not convert the header keys to lower case.
         2. Extracts Google service URL from the header.
         3. Extracts the content length if presents.
-        4. Removes the host header.
+        4. Removes the host header. This is needed because host header is originally 
+           set to http://localhost:PORT by caller of the proxy and will confuse the 
+           outbound http request if not removed.
 
         Returns:
             [request_headers, google_service_url, content_length]
@@ -52,8 +54,6 @@ class GoogleCertificateProxy(SimpleHTTPServer.SimpleHTTPRequestHandler):
           # CONTENT_LENGTH_HEADER will not present if the request does not contain data.
           content_length = None
 
-        # host header is set to http://localhost:PORT by the request
-        # and will confuse the outbound http request if not removed.
         request_headers.pop(HOST_HEADER, None)
 
         return request_headers, google_service_url, content_length
